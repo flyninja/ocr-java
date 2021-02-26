@@ -68,7 +68,7 @@ public class SimpleDirectPredictionStrategy implements PredictionStrategy {
 
     @Override
     public boolean isEnough(final Block block) {
-        return block.getM() > matchThreshold;
+        return block.getM() >= matchThreshold;
     }
 
 }

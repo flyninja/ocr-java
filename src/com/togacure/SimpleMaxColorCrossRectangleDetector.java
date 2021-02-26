@@ -10,28 +10,25 @@ public class SimpleMaxColorCrossRectangleDetector implements PredictionStrategy.
 
     private final BufferedImage image;
 
-    private final int color;
-
-    public SimpleMaxColorCrossRectangleDetector(BufferedImage image, int color) {
+    public SimpleMaxColorCrossRectangleDetector(BufferedImage image) {
         this.image = image;
-        this.color = color;
     }
 
     @Override
     public PredictionStrategy.Block takeRectangle(final PredictionStrategy.Block predicted) {
-        final Coordinate width = findMaxWidth(predicted.getX(), predicted.getY(), predicted.getHeight());
-        final Coordinate height = findMaxHeight(width.x, width.y, width.size);
+        final Coordinate width = findMaxWidth(predicted.getX(), predicted.getY(), predicted.getHeight(), predicted.getBackground());
+        final Coordinate height = findMaxHeight(width.x, width.y, width.size, predicted.getBackground());
         return new PredictionStrategy.Block(width.x, height.y, width.size, height.size);
     }
 
-    private Coordinate findMaxWidth(final int x, final int y, final int height) {
+    private Coordinate findMaxWidth(final int x, final int y, final int height, final int color) {
         Coordinate max = new Coordinate(x, y, 0);
         for (int i = 0; i < height; i++) {
             if (image.getRGB(x, y + i) != color) {
                 continue;
             }
-            int below = findBelowX(x, y + i);
-            int above = findAboveX(x, y + i);
+            int below = findBelowX(x, y + i, color);
+            int above = findAboveX(x, y + i, color);
             if (max.size < above - below) {
                 max = new Coordinate(below, y + i, above - below);
             }
@@ -39,11 +36,11 @@ public class SimpleMaxColorCrossRectangleDetector implements PredictionStrategy.
         return max;
     }
 
-    private Coordinate findMaxHeight(final int x, final int y, final int width) {
+    private Coordinate findMaxHeight(final int x, final int y, final int width, final int color) {
         Coordinate max = new Coordinate(x, y, 0);
         for (int i = 0; i < width; i++) {
-            int below = findBelowY(x + i, y);
-            int above = findAboveY(x + i, y);
+            int below = findBelowY(x + i, y, color);
+            int above = findAboveY(x + i, y, color);
             if (max.size < above - below) {
                 max = new Coordinate(x + i, below, above - below);
             }
@@ -51,7 +48,7 @@ public class SimpleMaxColorCrossRectangleDetector implements PredictionStrategy.
         return max;
     }
 
-    private int findBelowX(final int x, final int y) {
+    private int findBelowX(final int x, final int y, final int color) {
         int i = x;
         while (image.getRGB(i, y) == color) {
             i = i - 1;
@@ -59,7 +56,7 @@ public class SimpleMaxColorCrossRectangleDetector implements PredictionStrategy.
         return i;
     }
 
-    private int findAboveX(final int x, final int y) {
+    private int findAboveX(final int x, final int y, final int color) {
         int i = x;
         while (image.getRGB(i, y) == color) {
             i = i + 1;
@@ -67,7 +64,7 @@ public class SimpleMaxColorCrossRectangleDetector implements PredictionStrategy.
         return i;
     }
 
-    private int findBelowY(final int x, final int y) {
+    private int findBelowY(final int x, final int y, final int color) {
         int i = y;
         while (image.getRGB(x, i) == color) {
             i = i - 1;
@@ -75,7 +72,7 @@ public class SimpleMaxColorCrossRectangleDetector implements PredictionStrategy.
         return i;
     }
 
-    private int findAboveY(final int x, final int y) {
+    private int findAboveY(final int x, final int y, final int color) {
         int i = y;
         while (image.getRGB(x, i) == color) {
             i = i + 1;

@@ -1,6 +1,5 @@
 package com.togacure;
 
-import java.io.IOException;
 import java.util.Objects;
 
 /**
@@ -35,17 +34,13 @@ public interface PredictionStrategy {
         private final int height;
 
         private double m;
+        private int background;
 
         public Block(int x, int y, int width, int height) {
-            this(x, y, width, height, 0);
-        }
-
-        public Block(int x, int y, int width, int height, double m) {
             this.x = x;
             this.y = y;
             this.width = width;
             this.height = height;
-            this.m = m;
         }
 
         public int getX() {
@@ -72,6 +67,14 @@ public interface PredictionStrategy {
             return m;
         }
 
+        public int getBackground() {
+            return background;
+        }
+
+        public void setBackground(int background) {
+            this.background = background;
+        }
+
         @Override
         public String toString() {
             return m != 0 ? String.format("[x: %s y: %s w: %s h: %s m: %s]", x, y, width, height, m) :
@@ -85,11 +88,12 @@ public interface PredictionStrategy {
 
         @Override
         public boolean equals(Object obj) {
-            if (obj == null || !(obj instanceof Block)) {
+            if (!(obj instanceof Block)) {
                 return false;
             }
             final Block block = (Block) obj;
             return x == block.x && y == block.y && width == block.width && height == block.height;
         }
+
     }
 }
