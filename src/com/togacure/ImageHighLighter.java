@@ -12,9 +12,17 @@ import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
 
 import static com.togacure.PlayingCardImageSettings.CARD_BACKGROUND_COLORS;
+import static com.togacure.PlayingCardImageSettings.HAND_BLOCK_HEIGHT;
+import static com.togacure.PlayingCardImageSettings.HAND_BLOCK_WIDTH;
+import static com.togacure.PlayingCardImageSettings.HAND_BLOCK_X_OFFSET;
+import static com.togacure.PlayingCardImageSettings.HAND_BLOCK_Y_OFFSET;
 import static com.togacure.PlayingCardImageSettings.PREDICTION_BACKGROUND_BLOCK_PERCENTAGE;
 import static com.togacure.PlayingCardImageSettings.PREDICTION_BLOCK_HEIGHT;
 import static com.togacure.PlayingCardImageSettings.PREDICTION_BLOCK_WIDTH;
+import static com.togacure.PlayingCardImageSettings.SUITS_BLOCK_HEIGHT;
+import static com.togacure.PlayingCardImageSettings.SUITS_BLOCK_WIDTH;
+import static com.togacure.PlayingCardImageSettings.SUITS_BLOCK_X_OFFSET;
+import static com.togacure.PlayingCardImageSettings.SUITS_BLOCK_Y_OFFSET;
 
 /**
  * @author Vitaly Alekseev
@@ -35,7 +43,7 @@ public final class ImageHighLighter {
             } else if ("cell".equals(args[1])) {
                 cell(img, args[2]);
             } else if ("cards".equals(args[1])) {
-                cards(img);
+                cards(img, args[2]);
             }
 
             ImageIO.write(img, "PNG", new File(args[0]));
@@ -62,14 +70,7 @@ public final class ImageHighLighter {
         for (int i = 0; i < img.getWidth(); i += HORIZONTAL_CELL_SIZE) {
             if (i == (cell * HORIZONTAL_CELL_SIZE)) {
                 int y = img.getHeight() / 2;
-                for (int j = i; j < i + HORIZONTAL_CELL_SIZE; j++) {
-                    img.setRGB(j, y, Color.RED.getRGB());
-                    img.setRGB(j, y + VERTICAL_CELL_SIZE, Color.RED.getRGB());
-                }
-                for (int j = y; j < y + VERTICAL_CELL_SIZE; j++) {
-                    img.setRGB(i, j, Color.RED.getRGB());
-                    img.setRGB(i + HORIZONTAL_CELL_SIZE, j, Color.RED.getRGB());
-                }
+                rectangle(img, new PredictionStrategy.Block(i, y, HORIZONTAL_CELL_SIZE, VERTICAL_CELL_SIZE));
                 for (int j = y; j < y + VERTICAL_CELL_SIZE; j++) {
                     String row = String.format("row: %s: RGB's: ", j);
                     for (int k = i; k < i + HORIZONTAL_CELL_SIZE; k++) {
@@ -82,9 +83,9 @@ public final class ImageHighLighter {
         }
     }
 
-    private static void cards(final BufferedImage img) {
+    private static void cards(final BufferedImage img, final String area) {
         final PredictionStrategy.BlockRecognizer recognizer = new SimpleColorStatisticsBlockRecognizer(img, CARD_BACKGROUND_COLORS);
-        final PredictionStrategy.RectangleDetector detector = new SimpleMaxColorCrossRectangleDetector(img);
+        final PredictionStrategy.RectangleDetector detector = new CardAreaByMaxColorCrossRectangleDetector(img);
         final PredictionStrategy strategy = new SimpleDirectPredictionStrategy(img.getWidth(),
                 img.getHeight(),
                 img.getHeight() / 2,
@@ -92,6 +93,8 @@ public final class ImageHighLighter {
                 PREDICTION_BLOCK_WIDTH,
                 PREDICTION_BLOCK_HEIGHT,
                 PREDICTION_BACKGROUND_BLOCK_PERCENTAGE);
+        final PredictionStrategy.RectangleDetector suitsDetector = new FixedAreaDetector(SUITS_BLOCK_X_OFFSET, SUITS_BLOCK_Y_OFFSET, SUITS_BLOCK_WIDTH, SUITS_BLOCK_HEIGHT);
+        final PredictionStrategy.RectangleDetector handDetector = new FixedAreaDetector(HAND_BLOCK_X_OFFSET, HAND_BLOCK_Y_OFFSET, HAND_BLOCK_WIDTH, HAND_BLOCK_HEIGHT);
         final CardPredictor predictor = new CardPredictor(strategy, recognizer);
         predictor.predict();
         System.out.format("predicted blocks: %s\n", predictor.getBlocks());
@@ -102,16 +105,24 @@ public final class ImageHighLighter {
                 .collect(Collectors.toList());
         System.out.format("cards: %s\n", cards);
         cards.forEach(card -> {
-            for (int i = 0; i < card.getWidth(); i++) {
-                img.setRGB(card.getX() + i, card.getY(), Color.RED.getRGB());
-                img.setRGB(card.getX() + i, card.getY() + card.getHeight(), Color.RED.getRGB());
-            }
-
-            for (int i = 0; i < card.getHeight(); i++) {
-                img.setRGB(card.getX(), card.getY() + i, Color.RED.getRGB());
-                img.setRGB(card.getX() + card.getWidth(), card.getY() + i, Color.RED.getRGB());
+            rectangle(img, card);
+            if ("suits".equals(area)) {
+                rectangle(img, suitsDetector.takeRectangle(card));
+            } else if ("hand".equals(area)) {
+                rectangle(img, handDetector.takeRectangle(card));
             }
         });
     }
 
+    private final static void rectangle(final BufferedImage img, final PredictionStrategy.Block block) {
+        for (int i = 0; i < block.getWidth(); i++) {
+            img.setRGB(block.getX() + i, block.getY(), Color.RED.getRGB());
+            img.setRGB(block.getX() + i, block.getY() + block.getHeight(), Color.RED.getRGB());
+        }
+
+        for (int i = 0; i < block.getHeight(); i++) {
+            img.setRGB(block.getX(), block.getY() + i, Color.RED.getRGB());
+            img.setRGB(block.getX() + block.getWidth(), block.getY() + i, Color.RED.getRGB());
+        }
+    }
 }

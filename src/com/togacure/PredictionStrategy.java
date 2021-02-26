@@ -22,7 +22,7 @@ public interface PredictionStrategy {
 
     interface RectangleDetector {
 
-        Block takeRectangle(Block predicted);
+        Block takeRectangle(Block block);
 
     }
 

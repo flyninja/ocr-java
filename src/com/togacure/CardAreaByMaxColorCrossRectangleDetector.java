@@ -6,18 +6,18 @@ import java.awt.image.BufferedImage;
  * @author Vitaly Alekseev
  * @since 25.02.2021
  */
-public class SimpleMaxColorCrossRectangleDetector implements PredictionStrategy.RectangleDetector {
+public class CardAreaByMaxColorCrossRectangleDetector implements PredictionStrategy.RectangleDetector {
 
     private final BufferedImage image;
 
-    public SimpleMaxColorCrossRectangleDetector(BufferedImage image) {
+    public CardAreaByMaxColorCrossRectangleDetector(BufferedImage image) {
         this.image = image;
     }
 
     @Override
-    public PredictionStrategy.Block takeRectangle(final PredictionStrategy.Block predicted) {
-        final Coordinate width = findMaxWidth(predicted.getX(), predicted.getY(), predicted.getHeight(), predicted.getBackground());
-        final Coordinate height = findMaxHeight(width.x, width.y, width.size, predicted.getBackground());
+    public PredictionStrategy.Block takeRectangle(final PredictionStrategy.Block block) {
+        final Coordinate width = findMaxWidth(block.getX(), block.getY(), block.getHeight(), block.getBackground());
+        final Coordinate height = findMaxHeight(width.x, width.y, width.size, block.getBackground());
         return new PredictionStrategy.Block(width.x, height.y, width.size, height.size);
     }
 

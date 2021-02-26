@@ -16,6 +16,22 @@ public class PlayingCardImageSettings {
 
     public static double PREDICTION_BACKGROUND_BLOCK_PERCENTAGE = 70;
 
+    public static int SUITS_BLOCK_X_OFFSET = 3;
+
+    public static int SUITS_BLOCK_Y_OFFSET = 28;
+
+    public static int SUITS_BLOCK_WIDTH = 27;
+
+    public static int SUITS_BLOCK_HEIGHT = 27;
+
+    public static int HAND_BLOCK_X_OFFSET = 3;
+
+    public static int HAND_BLOCK_Y_OFFSET = 3;
+
+    public static int HAND_BLOCK_WIDTH = 30;
+
+    public static int HAND_BLOCK_HEIGHT = 27;
+
     public static Set<Integer> CARD_BACKGROUND_COLORS = new HashSet<>();
 
     static {
