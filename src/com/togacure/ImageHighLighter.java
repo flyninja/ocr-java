@@ -4,9 +4,6 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 import javax.imageio.ImageIO;
 
@@ -24,20 +21,21 @@ public final class ImageHighLighter {
 
     public static void main(final String[] args) throws IOException {
         PlayingCardImageSettings.TRACE = true;
-        try (final InputStream is = Files.newInputStream(Paths.get("resources", "imgs", args[0]))) {
-            final BufferedImage img = ImageIO.read(is);
-            System.out.format("%s\n", img);
 
-            if ("cells".equals(args[1])) {
-                cells(img);
-            } else if ("cell".equals(args[1])) {
-                cell(img, args[2]);
-            } else if ("cards".equals(args[1])) {
-                cards(img, args[2]);
-            }
+        final BufferedImage img = CardsDetectorFactory.getImage("resources", "imgs", args[0]);
 
-            ImageIO.write(img, "PNG", new File(args[0]));
+        System.out.format("%s\n", img);
+
+        if ("cells".equals(args[1])) {
+            cells(img);
+        } else if ("cell".equals(args[1])) {
+            cell(img, args[2]);
+        } else if ("cards".equals(args[1])) {
+            cards(img, args[2]);
         }
+
+        ImageIO.write(img, "PNG", new File(args[0]));
+
         System.out.println("Done.");
     }
 
@@ -77,14 +75,12 @@ public final class ImageHighLighter {
         final CardsDetector detector = CardsDetectorFactory.getCardsDetector(img);
         final List<Block> cards = detector.getCards();
         System.out.format("cards: %s\n", cards);
-        cards.forEach(card -> {
-            rectangle(img, card);
-            if ("suits".equals(area)) {
-                rectangle(img, CardsDetectorFactory.getDefaultSuitsDetector().takeRectangle(card));
-            } else if ("hand".equals(area)) {
-                rectangle(img, CardsDetectorFactory.getDefaultHandDetector().takeRectangle(card));
-            }
-        });
+        cards.forEach(card -> rectangle(img, card));
+        if ("suits".equals(area)) {
+            detector.getSuits().forEach(suit -> rectangle(img, suit));
+        } else if ("hands".equals(area)) {
+            detector.getHands().forEach(hand -> rectangle(img, hand));
+        }
     }
 
     private static void rectangle(final BufferedImage img, final Block block) {

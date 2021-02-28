@@ -47,4 +47,11 @@ public class CardsDetector {
         return cards;
     }
 
+    public List<Block> getSuits() {
+        return getCards().stream().map(CardsDetectorFactory.getDefaultSuitsDetector()::takeRectangle).collect(Collectors.toList());
+    }
+
+    public List<Block> getHands() {
+        return getCards().stream().map(CardsDetectorFactory.getDefaultHandDetector()::takeRectangle).collect(Collectors.toList());
+    }
 }

@@ -1,9 +1,14 @@
 package com.togacure;
 
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import javax.imageio.ImageIO;
 
 import static com.togacure.PlayingCardImageSettings.CARD_BACKGROUND_COLORS;
 import static com.togacure.PlayingCardImageSettings.HAND_BLOCK_HEIGHT;
@@ -50,6 +55,12 @@ public class CardsDetectorFactory {
 
     public static PredictionStrategy.RectangleDetector getDefaultHandDetector() {
         return handDetector;
+    }
+
+    public static BufferedImage getImage(final String directory, final String... paths) throws IOException {
+        try (final InputStream is = Files.newInputStream(Paths.get(directory, paths))) {
+            return ImageIO.read(is);
+        }
     }
 
     private static class ImgKey {
