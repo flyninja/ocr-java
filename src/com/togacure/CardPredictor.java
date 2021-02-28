@@ -3,6 +3,8 @@ package com.togacure;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.togacure.PlayingCardImageSettings.TRACE;
+
 /**
  * @author Vitaly Alekseev
  * @since 25.02.2021
@@ -24,7 +26,9 @@ public class CardPredictor {
         Block block = strategy.getInitialBlock();
         do {
             recognizer.recognize(block);
-            System.out.format("predict: current block: %s\n", block);
+            if (TRACE) {
+                System.out.format("predict: current block: %s\n", block);
+            }
             if (strategy.isEnough(block)) {
                 blocks.add(block);
             }

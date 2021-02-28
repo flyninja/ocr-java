@@ -8,21 +8,10 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
 
-import static com.togacure.PlayingCardImageSettings.CARD_BACKGROUND_COLORS;
-import static com.togacure.PlayingCardImageSettings.HAND_BLOCK_HEIGHT;
-import static com.togacure.PlayingCardImageSettings.HAND_BLOCK_WIDTH;
-import static com.togacure.PlayingCardImageSettings.HAND_BLOCK_X_OFFSET;
-import static com.togacure.PlayingCardImageSettings.HAND_BLOCK_Y_OFFSET;
-import static com.togacure.PlayingCardImageSettings.PREDICTION_BACKGROUND_BLOCK_PERCENTAGE;
 import static com.togacure.PlayingCardImageSettings.PREDICTION_BLOCK_HEIGHT;
 import static com.togacure.PlayingCardImageSettings.PREDICTION_BLOCK_WIDTH;
-import static com.togacure.PlayingCardImageSettings.SUITS_BLOCK_HEIGHT;
-import static com.togacure.PlayingCardImageSettings.SUITS_BLOCK_WIDTH;
-import static com.togacure.PlayingCardImageSettings.SUITS_BLOCK_X_OFFSET;
-import static com.togacure.PlayingCardImageSettings.SUITS_BLOCK_Y_OFFSET;
 
 /**
  * @author Vitaly Alekseev
@@ -34,6 +23,7 @@ public final class ImageHighLighter {
     private static final int HORIZONTAL_CELL_SIZE = PREDICTION_BLOCK_HEIGHT;
 
     public static void main(final String[] args) throws IOException {
+        PlayingCardImageSettings.TRACE = true;
         try (final InputStream is = Files.newInputStream(Paths.get("resources", "imgs", args[0]))) {
             final BufferedImage img = ImageIO.read(is);
             System.out.format("%s\n", img);
@@ -84,32 +74,15 @@ public final class ImageHighLighter {
     }
 
     private static void cards(final BufferedImage img, final String area) {
-        final PredictionStrategy.BlockRecognizer recognizer = new SimpleColorStatisticsBlockRecognizer(img, CARD_BACKGROUND_COLORS);
-        final PredictionStrategy.RectangleDetector detector = new CardAreaByMaxColorCrossRectangleDetector(img);
-        final PredictionStrategy strategy = new SimpleDirectPredictionStrategy(img.getWidth(),
-                img.getHeight(),
-                img.getHeight() / 2,
-                (img.getHeight() / 2) + 100,
-                PREDICTION_BLOCK_WIDTH,
-                PREDICTION_BLOCK_HEIGHT,
-                PREDICTION_BACKGROUND_BLOCK_PERCENTAGE);
-        final PredictionStrategy.RectangleDetector suitsDetector = new FixedAreaDetector(SUITS_BLOCK_X_OFFSET, SUITS_BLOCK_Y_OFFSET, SUITS_BLOCK_WIDTH, SUITS_BLOCK_HEIGHT);
-        final PredictionStrategy.RectangleDetector handDetector = new FixedAreaDetector(HAND_BLOCK_X_OFFSET, HAND_BLOCK_Y_OFFSET, HAND_BLOCK_WIDTH, HAND_BLOCK_HEIGHT);
-        final CardPredictor predictor = new CardPredictor(strategy, recognizer);
-        predictor.predict();
-        System.out.format("predicted blocks: %s\n", predictor.getBlocks());
-        final List<Block> cards = predictor.getBlocks().stream()
-                .map(detector::takeRectangle)
-                .filter(block -> block.getWidth() != 0 && block.getHeight() != 0)
-                .distinct()
-                .collect(Collectors.toList());
+        final CardsDetector detector = CardsDetectorFactory.getCardsDetector(img);
+        final List<Block> cards = detector.getCards();
         System.out.format("cards: %s\n", cards);
         cards.forEach(card -> {
             rectangle(img, card);
             if ("suits".equals(area)) {
-                rectangle(img, suitsDetector.takeRectangle(card));
+                rectangle(img, CardsDetectorFactory.getDefaultSuitsDetector().takeRectangle(card));
             } else if ("hand".equals(area)) {
-                rectangle(img, handDetector.takeRectangle(card));
+                rectangle(img, CardsDetectorFactory.getDefaultHandDetector().takeRectangle(card));
             }
         });
     }
