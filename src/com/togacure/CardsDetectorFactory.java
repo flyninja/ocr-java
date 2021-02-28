@@ -1,6 +1,7 @@
 package com.togacure;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -59,6 +60,12 @@ public class CardsDetectorFactory {
 
     public static BufferedImage getImage(final String directory, final String... paths) throws IOException {
         try (final InputStream is = Files.newInputStream(Paths.get(directory, paths))) {
+            return ImageIO.read(is);
+        }
+    }
+
+    public static BufferedImage getImage(final File file) throws IOException {
+        try (final InputStream is = Files.newInputStream(file.toPath())) {
             return ImageIO.read(is);
         }
     }
