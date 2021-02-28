@@ -1,7 +1,6 @@
 package com.togacure;
 
 import java.awt.image.BufferedImage;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -22,7 +21,7 @@ public class SimpleColorStatisticsBlockRecognizer implements PredictionStrategy.
     }
 
     @Override
-    public void recognize(final PredictionStrategy.Block block) {
+    public void recognize(final Block block) {
         final Map<Integer, Double> counters = new HashMap<>();
         for (int i = block.getY(); i < block.getY() + block.getHeight(); i++) {
             for (int j = block.getX(); j < block.getX() + block.getWidth(); j++) {

@@ -13,7 +13,7 @@ public class CardPredictor {
 
     private final PredictionStrategy.BlockRecognizer recognizer;
 
-    private final List<PredictionStrategy.Block> blocks = new LinkedList<>();
+    private final List<Block> blocks = new LinkedList<>();
 
     public CardPredictor(final PredictionStrategy strategy, final PredictionStrategy.BlockRecognizer recognizer) {
         this.strategy = strategy;
@@ -21,7 +21,7 @@ public class CardPredictor {
     }
 
     public void predict() {
-        PredictionStrategy.Block block = strategy.getInitialBlock();
+        Block block = strategy.getInitialBlock();
         do {
             recognizer.recognize(block);
             System.out.format("predict: current block: %s\n", block);
@@ -32,7 +32,7 @@ public class CardPredictor {
     }
 
 
-    public List<PredictionStrategy.Block> getBlocks() {
+    public List<Block> getBlocks() {
         return blocks;
     }
 

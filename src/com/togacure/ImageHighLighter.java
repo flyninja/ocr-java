@@ -70,7 +70,7 @@ public final class ImageHighLighter {
         for (int i = 0; i < img.getWidth(); i += HORIZONTAL_CELL_SIZE) {
             if (i == (cell * HORIZONTAL_CELL_SIZE)) {
                 int y = img.getHeight() / 2;
-                rectangle(img, new PredictionStrategy.Block(i, y, HORIZONTAL_CELL_SIZE, VERTICAL_CELL_SIZE));
+                rectangle(img, new Block(i, y, HORIZONTAL_CELL_SIZE, VERTICAL_CELL_SIZE));
                 for (int j = y; j < y + VERTICAL_CELL_SIZE; j++) {
                     String row = String.format("row: %s: RGB's: ", j);
                     for (int k = i; k < i + HORIZONTAL_CELL_SIZE; k++) {
@@ -98,7 +98,7 @@ public final class ImageHighLighter {
         final CardPredictor predictor = new CardPredictor(strategy, recognizer);
         predictor.predict();
         System.out.format("predicted blocks: %s\n", predictor.getBlocks());
-        final List<PredictionStrategy.Block> cards = predictor.getBlocks().stream()
+        final List<Block> cards = predictor.getBlocks().stream()
                 .map(detector::takeRectangle)
                 .filter(block -> block.getWidth() != 0 && block.getHeight() != 0)
                 .distinct()
@@ -114,7 +114,7 @@ public final class ImageHighLighter {
         });
     }
 
-    private final static void rectangle(final BufferedImage img, final PredictionStrategy.Block block) {
+    private static void rectangle(final BufferedImage img, final Block block) {
         for (int i = 0; i < block.getWidth(); i++) {
             img.setRGB(block.getX() + i, block.getY(), Color.RED.getRGB());
             img.setRGB(block.getX() + i, block.getY() + block.getHeight(), Color.RED.getRGB());
