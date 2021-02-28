@@ -54,4 +54,16 @@ public class CardsDetector {
     public List<Block> getHands() {
         return getCards().stream().map(CardsDetectorFactory.getDefaultHandDetector()::takeRectangle).collect(Collectors.toList());
     }
+
+    public List<BufferedImage> getSuitsImages() {
+        return getSuits().stream().map(this::blockToImage).collect(Collectors.toList());
+    }
+
+    public List<BufferedImage> getHandsImages() {
+        return getHands().stream().map(this::blockToImage).collect(Collectors.toList());
+    }
+
+    private BufferedImage blockToImage(final Block block) {
+        return image.getSubimage(block.getX(), block.getY(), block.getWidth(), block.getHeight());
+    }
 }
