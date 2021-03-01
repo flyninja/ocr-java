@@ -1,9 +1,10 @@
 package com.togacure;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static com.togacure.PlayingCardImageSettings.TRACE;
 
 /**
  * @author Vitaly Alekseev
@@ -72,14 +73,24 @@ public class Perceptron {
         }
     }
 
-    public List<String> test(final double[] input) {
+    public String test(final double[] input) {
         if (input == null) {
             throw new IllegalArgumentException("null argument");
         }
         if (input.length != size) {
             throw new IllegalArgumentException(String.format("input length must be %s size but %s has been received", size, input.length));
         }
-        return weights.entrySet().stream().filter(e -> sum(bias.get(e.getKey()), e.getValue(), input) > threshold).map(Map.Entry::getKey).collect(Collectors.toList());
+        return weights.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> {
+            final double sum = sum(bias.get(e.getKey()), e.getValue(), input);
+            if (TRACE) {
+                System.out.format("test: character: %s sum: %s\n", e.getKey(), sum);
+            }
+            return sum;
+        })).entrySet()
+                .stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse(null);
     }
 
     private double sum(final double bias, final double[] weights, final double[] input) {

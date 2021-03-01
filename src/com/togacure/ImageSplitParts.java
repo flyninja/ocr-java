@@ -26,7 +26,7 @@ public class ImageSplitParts {
     public static void main(final String[] args) throws IOException {
 
         if (args.length != 2) {
-            throw new IllegalArgumentException(String.format("two arguments are expected but was/were gotten %s", Arrays.toString(args)));
+            throw new IllegalArgumentException(String.format("two arguments are expected but have/has been received %s", Arrays.toString(args)));
         }
 
         final Path input = Paths.get(args[0]);
