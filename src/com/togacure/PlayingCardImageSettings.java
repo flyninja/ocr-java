@@ -41,4 +41,8 @@ public class PlayingCardImageSettings {
         CARD_BACKGROUND_COLORS.add(new Color(0x78, 0x78, 0x78).getRGB());
     }
 
+    public static final double DEFAULT_PERCEPTRON_THRESHOLD = 0.0;
+
+    public static final double DEFAULT_PERCEPTRON_LR = 1.0;
+
 }
