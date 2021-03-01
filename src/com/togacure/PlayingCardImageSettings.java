@@ -43,8 +43,6 @@ public class PlayingCardImageSettings {
 
     public static final double DEFAULT_PERCEPTRON_THRESHOLD = 0.0;
 
-    public static final double DEFAULT_PERCEPTRON_LR = 1.0;
-
     public static final int DEFAULT_CARD_DETECTOR_IMAGE_PART = 2;
 
     public static final int DEFAULT_CARD_DETECTOR_IMAGE_MAX_HEIGHT = 2;

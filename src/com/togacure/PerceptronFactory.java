@@ -5,8 +5,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
-import static com.togacure.PlayingCardImageSettings.DEFAULT_PERCEPTRON_LR;
 import static com.togacure.PlayingCardImageSettings.DEFAULT_PERCEPTRON_THRESHOLD;
 
 /**
@@ -29,18 +29,18 @@ public class PerceptronFactory {
         }
     }
 
-    public static Perceptron createPerceptron(final int size) {
-        return new Perceptron(DEFAULT_PERCEPTRON_THRESHOLD, DEFAULT_PERCEPTRON_LR, size);
+    public static Perceptron createPerceptron(final int size, final List<String> characters) {
+        return new Perceptron(DEFAULT_PERCEPTRON_THRESHOLD, size, characters);
     }
 
-    public static Perceptron loadPerceptron(final int size, final Path weights, final Path bias) throws IOException {
-        return new Perceptron(DEFAULT_PERCEPTRON_THRESHOLD, DEFAULT_PERCEPTRON_LR, size, load(weights), load(bias));
+    public static Perceptron loadPerceptron(final int size, final Path weights) throws IOException {
+        return new Perceptron(DEFAULT_PERCEPTRON_THRESHOLD, size, load(weights), null);
     }
 
-    public static double[] rgb2bipolar(final int[] rgb, final int background) {
+    public static double[] rgb2bin(final int[] rgb, final int background) {
         final double[] result = new double[rgb.length];
         for (int i = 0; i < rgb.length; i++) {
-            result[i] = rgb[i] == background ? 1 : -1;
+            result[i] = rgb[i] == background ? 0 : 1;
         }
         return result;
     }

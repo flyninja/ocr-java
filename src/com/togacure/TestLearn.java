@@ -2,10 +2,8 @@ package com.togacure;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
 import static com.togacure.LearnTool.getBackground;
 
@@ -19,15 +17,14 @@ public class TestLearn {
         PlayingCardImageSettings.TRACE = true;
         final BufferedImage img = CardsDetectorFactory.getImage(args[0]);
         final Path weights = Paths.get(args[1]);
-        final Path bias = Paths.get(args[2]);
-        final int width = Integer.parseInt(args[3]);
-        final int height = Integer.parseInt(args[4]);
+        final int width = Integer.parseInt(args[2]);
+        final int height = Integer.parseInt(args[3]);
 
-        final Perceptron perceptron = PerceptronFactory.loadPerceptron(width * height, weights, bias);
+        final Perceptron perceptron = PerceptronFactory.loadPerceptron(width * height, weights);
 
         final int[] rgb = img.getRGB(0, 0, img.getWidth(), img.getHeight(), null, 0, img.getWidth());
 
-        final String detected = perceptron.test(PerceptronFactory.rgb2bipolar(rgb, getBackground(rgb)));
+        final String detected = perceptron.test(PerceptronFactory.rgb2bin(rgb, getBackground(rgb)));
 
         System.out.format("Done. Detected '%s'\n", detected);
     }

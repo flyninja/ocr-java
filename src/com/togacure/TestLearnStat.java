@@ -25,11 +25,10 @@ public class TestLearnStat {
             throw new IllegalArgumentException(String.format("%s should be directory", input));
         }
         final Path weights = Paths.get(args[1]);
-        final Path bias = Paths.get(args[2]);
-        final int width = Integer.parseInt(args[3]);
-        final int height = Integer.parseInt(args[4]);
+        final int width = Integer.parseInt(args[2]);
+        final int height = Integer.parseInt(args[3]);
 
-        final Perceptron perceptron = PerceptronFactory.loadPerceptron(width * height, weights, bias);
+        final Perceptron perceptron = PerceptronFactory.loadPerceptron(width * height, weights);
 
         final Map<String, Integer> counts = new HashMap<>();
 
@@ -40,7 +39,7 @@ public class TestLearnStat {
                     try {
                         final BufferedImage img = CardsDetectorFactory.getImage(file);
                         final int[] rgb = img.getRGB(0, 0, img.getWidth(), img.getHeight(), null, 0, img.getWidth());
-                        final String detected = perceptron.test(PerceptronFactory.rgb2bipolar(rgb, getBackground(rgb)));
+                        final String detected = perceptron.test(PerceptronFactory.rgb2bin(rgb, getBackground(rgb)));
                         counts.compute(detected, (k, v) -> v == null ? 1 : v + 1);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
