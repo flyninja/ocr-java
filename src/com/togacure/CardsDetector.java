@@ -1,6 +1,7 @@
 package com.togacure;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,7 +45,7 @@ public class CardsDetector {
                     .distinct()
                     .collect(Collectors.toList()));
         }
-        return cards;
+        return new ArrayList<>(cards);
     }
 
     public List<Block> getSuits() {

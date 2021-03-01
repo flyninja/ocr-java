@@ -1,5 +1,6 @@
 package com.togacure;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -37,7 +38,7 @@ public class CardPredictor {
 
 
     public List<Block> getBlocks() {
-        return blocks;
+        return new ArrayList<>(blocks);
     }
 
 
