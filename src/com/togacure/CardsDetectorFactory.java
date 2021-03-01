@@ -12,6 +12,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.imageio.ImageIO;
 
 import static com.togacure.PlayingCardImageSettings.CARD_BACKGROUND_COLORS;
+import static com.togacure.PlayingCardImageSettings.DEFAULT_CARD_DETECTOR_IMAGE_MAX_HEIGHT;
+import static com.togacure.PlayingCardImageSettings.DEFAULT_CARD_DETECTOR_IMAGE_PART;
 import static com.togacure.PlayingCardImageSettings.HAND_BLOCK_HEIGHT;
 import static com.togacure.PlayingCardImageSettings.HAND_BLOCK_WIDTH;
 import static com.togacure.PlayingCardImageSettings.HAND_BLOCK_X_OFFSET;
@@ -40,8 +42,8 @@ public class CardsDetectorFactory {
         final PredictionStrategy strategy = strategies.computeIfAbsent(new ImgKey(img.getWidth(), img.getHeight()), k ->
                 new SimpleDirectPredictionStrategy(img.getWidth(),
                         img.getHeight(),
-                        img.getHeight() / 2,
-                        (img.getHeight() / 2) + 100,
+                        img.getHeight() / DEFAULT_CARD_DETECTOR_IMAGE_PART,
+                        (img.getHeight() / DEFAULT_CARD_DETECTOR_IMAGE_PART) + DEFAULT_CARD_DETECTOR_IMAGE_MAX_HEIGHT,
                         PREDICTION_BLOCK_WIDTH,
                         PREDICTION_BLOCK_HEIGHT,
                         PREDICTION_BACKGROUND_BLOCK_PERCENTAGE));
