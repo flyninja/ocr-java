@@ -46,7 +46,7 @@ public class CardsDetectorFactory {
     private static final Map<ImgKey, PredictionStrategy> strategies = new ConcurrentHashMap<>();
 
     public static CardsDetector getCardsDetector(final BufferedImage img) {
-        final PredictionStrategy.RectangleDetector detector = new CardAreaByMaxColorCrossRectangleDetector(img);
+        final PredictionStrategy.RectangleDetector detector = new CardAreaRectangleDetector(img);
         final PredictionStrategy strategy = strategies.computeIfAbsent(new ImgKey(img.getWidth(), img.getHeight()), k ->
                 new SimpleDirectPredictionStrategy(img.getWidth(),
                         img.getHeight(),

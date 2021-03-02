@@ -6,11 +6,11 @@ import java.awt.image.BufferedImage;
  * @author Vitaly Alekseev
  * @since 25.02.2021
  */
-public class CardAreaByMaxColorCrossRectangleDetector implements PredictionStrategy.RectangleDetector {
+public class CardAreaRectangleDetector implements PredictionStrategy.RectangleDetector {
 
     private final BufferedImage image;
 
-    public CardAreaByMaxColorCrossRectangleDetector(final BufferedImage image) {
+    public CardAreaRectangleDetector(final BufferedImage image) {
         this.image = image;
     }
 
