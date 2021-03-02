@@ -1,5 +1,6 @@
 *.iml
 /.idea/
-/learn/
+/learn*/
 /out/
 /neural/
+/learn1/
