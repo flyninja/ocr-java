@@ -26,13 +26,29 @@ public class PlayingCardImageSettings {
 
     public static final int SUITS_BLOCK_HEIGHT = 27;
 
-    public static final int HAND_BLOCK_X_OFFSET = 3;
+    public static final int HANDS_BLOCK_X_OFFSET = 3;
 
-    public static final int HAND_BLOCK_Y_OFFSET = 3;
+    public static final int HANDS_BLOCK_Y_OFFSET = 3;
 
-    public static final int HAND_BLOCK_WIDTH = 30;
+    public static final int HANDS_BLOCK_WIDTH = 30;
 
-    public static final int HAND_BLOCK_HEIGHT = 27;
+    public static final int HANDS_BLOCK_HEIGHT = 28;
+
+    public static final int SUITS_IMAGE_WIDTH = 20;
+
+    public static final int SUITS_IMAGE_HEIGHT = 20;
+
+    public static final int SUITS_BLOCK_VERTICAL_GAP = 4;
+
+    public static final int SUITS_BLOCK_HORIZONTAL_GAP = 4;
+
+    public static final int HANDS_IMAGE_WIDTH = 30;
+
+    public static final int HANDS_IMAGE_HEIGHT = 28;
+
+    public static final int HANDS_BLOCK_VERTICAL_GAP = 2;
+
+    public static final int HANDS_BLOCK_HORIZONTAL_GAP = 2;
 
     public static final Set<Integer> CARD_BACKGROUND_COLORS = new HashSet<>();
 

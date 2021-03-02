@@ -1,5 +1,7 @@
 package com.togacure;
 
+import static com.togacure.PlayingCardImageSettings.TRACE;
+
 /**
  * @author Vitaly Alekseev
  * @since 27.02.2021
@@ -25,6 +27,10 @@ public class FixedAreaDetector implements PredictionStrategy.RectangleDetector {
     public Block takeRectangle(final Block block) {
         final Block result = new Block(block.getX() + xOffset, block.getY() + yOffset, width, height);
         result.setBackground(block.getBackground());
+        result.setM(block.getM());
+        if (TRACE) {
+            System.out.format("Fixed area: %s\n", result);
+        }
         return result;
     }
 

@@ -14,17 +14,25 @@ import javax.imageio.ImageIO;
 import static com.togacure.PlayingCardImageSettings.CARD_BACKGROUND_COLORS;
 import static com.togacure.PlayingCardImageSettings.DEFAULT_CARD_DETECTOR_IMAGE_MAX_HEIGHT;
 import static com.togacure.PlayingCardImageSettings.DEFAULT_CARD_DETECTOR_IMAGE_PART;
-import static com.togacure.PlayingCardImageSettings.HAND_BLOCK_HEIGHT;
-import static com.togacure.PlayingCardImageSettings.HAND_BLOCK_WIDTH;
-import static com.togacure.PlayingCardImageSettings.HAND_BLOCK_X_OFFSET;
-import static com.togacure.PlayingCardImageSettings.HAND_BLOCK_Y_OFFSET;
+import static com.togacure.PlayingCardImageSettings.HANDS_BLOCK_HEIGHT;
+import static com.togacure.PlayingCardImageSettings.HANDS_BLOCK_HORIZONTAL_GAP;
+import static com.togacure.PlayingCardImageSettings.HANDS_BLOCK_VERTICAL_GAP;
+import static com.togacure.PlayingCardImageSettings.HANDS_BLOCK_WIDTH;
+import static com.togacure.PlayingCardImageSettings.HANDS_BLOCK_X_OFFSET;
+import static com.togacure.PlayingCardImageSettings.HANDS_BLOCK_Y_OFFSET;
+import static com.togacure.PlayingCardImageSettings.HANDS_IMAGE_HEIGHT;
+import static com.togacure.PlayingCardImageSettings.HANDS_IMAGE_WIDTH;
 import static com.togacure.PlayingCardImageSettings.PREDICTION_BACKGROUND_BLOCK_PERCENTAGE;
 import static com.togacure.PlayingCardImageSettings.PREDICTION_BLOCK_HEIGHT;
 import static com.togacure.PlayingCardImageSettings.PREDICTION_BLOCK_WIDTH;
 import static com.togacure.PlayingCardImageSettings.SUITS_BLOCK_HEIGHT;
+import static com.togacure.PlayingCardImageSettings.SUITS_BLOCK_HORIZONTAL_GAP;
+import static com.togacure.PlayingCardImageSettings.SUITS_BLOCK_VERTICAL_GAP;
 import static com.togacure.PlayingCardImageSettings.SUITS_BLOCK_WIDTH;
 import static com.togacure.PlayingCardImageSettings.SUITS_BLOCK_X_OFFSET;
 import static com.togacure.PlayingCardImageSettings.SUITS_BLOCK_Y_OFFSET;
+import static com.togacure.PlayingCardImageSettings.SUITS_IMAGE_HEIGHT;
+import static com.togacure.PlayingCardImageSettings.SUITS_IMAGE_WIDTH;
 
 /**
  * @author Vitaly Alekseev
@@ -32,8 +40,8 @@ import static com.togacure.PlayingCardImageSettings.SUITS_BLOCK_Y_OFFSET;
  */
 public class CardsDetectorFactory {
 
-    private static final PredictionStrategy.RectangleDetector suitsDetector = new FixedAreaDetector(SUITS_BLOCK_X_OFFSET, SUITS_BLOCK_Y_OFFSET, SUITS_BLOCK_WIDTH, SUITS_BLOCK_HEIGHT);
-    private static final PredictionStrategy.RectangleDetector handDetector = new FixedAreaDetector(HAND_BLOCK_X_OFFSET, HAND_BLOCK_Y_OFFSET, HAND_BLOCK_WIDTH, HAND_BLOCK_HEIGHT);
+    private static final PredictionStrategy.RectangleDetector suitsInitialDetector = new FixedAreaDetector(SUITS_BLOCK_X_OFFSET, SUITS_BLOCK_Y_OFFSET, SUITS_BLOCK_WIDTH, SUITS_BLOCK_HEIGHT);
+    private static final PredictionStrategy.RectangleDetector handsInitialDetector = new FixedAreaDetector(HANDS_BLOCK_X_OFFSET, HANDS_BLOCK_Y_OFFSET, HANDS_BLOCK_WIDTH, HANDS_BLOCK_HEIGHT);
 
     private static final Map<ImgKey, PredictionStrategy> strategies = new ConcurrentHashMap<>();
 
@@ -52,12 +60,20 @@ public class CardsDetectorFactory {
         return new CardsDetector(img, detector, predictor);
     }
 
-    public static PredictionStrategy.RectangleDetector getDefaultSuitsDetector() {
-        return suitsDetector;
+    public static PredictionStrategy.RectangleDetector getInitialSuitsDetector() {
+        return suitsInitialDetector;
     }
 
-    public static PredictionStrategy.RectangleDetector getDefaultHandDetector() {
-        return handDetector;
+    public static PredictionStrategy.RectangleDetector getInitialHandsDetector() {
+        return handsInitialDetector;
+    }
+
+    public static PredictionStrategy.RectangleDetector getSuitsImageDetector(final BufferedImage image) {
+        return new ImagePositionCenterDetector(image, SUITS_BLOCK_HORIZONTAL_GAP, SUITS_BLOCK_VERTICAL_GAP, SUITS_IMAGE_WIDTH, SUITS_IMAGE_HEIGHT);
+    }
+
+    public static PredictionStrategy.RectangleDetector getHandsImageDetector(final BufferedImage image) {
+        return new ImagePositionCenterDetector(image, HANDS_BLOCK_HORIZONTAL_GAP, HANDS_BLOCK_VERTICAL_GAP, HANDS_IMAGE_WIDTH, HANDS_IMAGE_HEIGHT);
     }
 
     public static BufferedImage getImage(final String directory, final String... paths) throws IOException {

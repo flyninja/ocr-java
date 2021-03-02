@@ -49,11 +49,13 @@ public class CardsDetector {
     }
 
     public List<Block> getSuits() {
-        return getCards().stream().map(CardsDetectorFactory.getDefaultSuitsDetector()::takeRectangle).collect(Collectors.toList());
+        final PredictionStrategy.RectangleDetector imageDetector = CardsDetectorFactory.getSuitsImageDetector(image);
+        return getCards().stream().map(CardsDetectorFactory.getInitialSuitsDetector()::takeRectangle).map(imageDetector::takeRectangle).collect(Collectors.toList());
     }
 
     public List<Block> getHands() {
-        return getCards().stream().map(CardsDetectorFactory.getDefaultHandDetector()::takeRectangle).collect(Collectors.toList());
+        final PredictionStrategy.RectangleDetector imageDetector = CardsDetectorFactory.getHandsImageDetector(image);
+        return getCards().stream().map(CardsDetectorFactory.getInitialHandsDetector()::takeRectangle).map(imageDetector::takeRectangle).collect(Collectors.toList());
     }
 
     public List<BufferedImage> getSuitsImages() {

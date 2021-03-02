@@ -10,7 +10,7 @@ public class CardAreaByMaxColorCrossRectangleDetector implements PredictionStrat
 
     private final BufferedImage image;
 
-    public CardAreaByMaxColorCrossRectangleDetector(BufferedImage image) {
+    public CardAreaByMaxColorCrossRectangleDetector(final BufferedImage image) {
         this.image = image;
     }
 
@@ -18,7 +18,10 @@ public class CardAreaByMaxColorCrossRectangleDetector implements PredictionStrat
     public Block takeRectangle(final Block block) {
         final Coordinate width = findMaxWidth(block.getX(), block.getY(), block.getHeight(), block.getBackground());
         final Coordinate height = findMaxHeight(width.x, width.y, width.size, block.getBackground());
-        return new Block(width.x, height.y, width.size, height.size);
+        final Block result = new Block(width.x, height.y, width.size, height.size);
+        result.setBackground(block.getBackground());
+        result.setM(block.getM());
+        return result;
     }
 
     private Coordinate findMaxWidth(final int x, final int y, final int height, final int color) {
