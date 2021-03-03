@@ -52,7 +52,7 @@ public class LearnTool {
 
         final Perceptron perceptron = PerceptronFactory.createPerceptron(width * height, characters);
 
-        characters.forEach(c -> trainZero(perceptron, c));
+        characters.forEach(c -> trainZero(perceptron, c, width, height));
 
         Arrays.stream(Objects.requireNonNull(input.toFile().listFiles())).filter(File::isDirectory).forEach(folder -> trainFolder(perceptron, characters, folder));
 
@@ -69,33 +69,40 @@ public class LearnTool {
         return input;
     }
 
-    static double[] getData(final File file) {
+    static double[][] getData(final File file) {
         try {
             final BufferedImage img = CardsDetectorFactory.getImage(file);
-            final int[] rgb = img.getRGB(0, 0, img.getWidth(), img.getHeight(), null, 0, img.getWidth());
+            final int[][] rgb = new int[img.getHeight()][img.getWidth()];
+            for (int y = 0; y < img.getHeight(); y++) {
+                for (int x = 0; x < img.getWidth(); x++) {
+                    rgb[y][x] = img.getRGB(x, y);
+                }
+            }
             return PerceptronFactory.rgb2bin(rgb, getBackground(rgb));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    static int getBackground(final int[] rgb) {
+    static int getBackground(final int[][] rgb) {
         final Map<Integer, Integer> counters = new HashMap<>();
-        for (int j : rgb) {
-            counters.compute(j, (k, v) -> v == null ? 1 : v + 1);
+        for (int[] line : rgb) {
+            for (int p : line) {
+                counters.compute(p, (k, v) -> v == null ? 1 : v + 1);
+            }
         }
         return CARD_BACKGROUND_COLORS.stream().filter(counters::containsKey).max(Comparator.comparing(counters::get)).orElseThrow(IllegalStateException::new);
     }
 
     static void trainImage(final Perceptron perceptron, final File file, final String character) {
         System.out.format("train image: character: %s file: %s\n", character, file.getName());
-        final double[] bin = getData(file);
+        final double[][] bin = getData(file);
         perceptron.trainTrue(character, bin);
     }
 
     static void trainImageFalse(final Perceptron perceptron, final File file, final String character) {
         System.out.format("train image false: character: %s file: %s\n", character, file.getName());
-        final double[] bin = getData(file);
+        final double[][] bin = getData(file);
         perceptron.trainFalse(character, bin);
     }
 
@@ -115,9 +122,9 @@ public class LearnTool {
         characters.stream().filter(c -> !c.equals(character)).forEach(c -> trainImageFalse(perceptron, file, character));
     }
 
-    private static void trainZero(final Perceptron perceptron, final String character) {
+    private static void trainZero(final Perceptron perceptron, final String character, final int width, final int height) {
         System.out.format("train zero: %s\n", character);
-        final double[] zero = new double[perceptron.getSize()];
+        final double[][] zero = new double[height][width];
         perceptron.trainFalse(character, zero);
     }
 

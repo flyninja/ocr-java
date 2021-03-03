@@ -58,27 +58,24 @@ public class Perceptron {
         return weights.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    public int getSize() {
-        return size;
+    public void trainTrue(final String character, final double[][] input) {
+        train(character, flatMap(input), sum -> sum >= threshold, Double::sum);
     }
 
-    public void trainTrue(final String character, final double[] input) {
-        train(character, input, sum -> sum >= threshold, Double::sum);
+    public void trainFalse(final String character, final double[][] input) {
+        train(character, flatMap(input), sum -> sum < threshold, (w, i) -> w - i);
     }
 
-    public void trainFalse(final String character, final double[] input) {
-        train(character, input, sum -> sum < threshold, (w, i) -> w - i);
-    }
-
-    public String test(final double[] input) {
+    public String test(final double[][] input) {
         if (input == null) {
             throw new IllegalArgumentException("null argument");
         }
-        if (input.length != size) {
+        final double[] data = flatMap(input);
+        if (data.length != size) {
             throw new IllegalArgumentException(String.format("input length must be %s size but %s has been received", size, input.length));
         }
         return weights.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> {
-            final double sum = sum(bias.get(e.getKey()), e.getValue(), input);
+            final double sum = sum(bias.get(e.getKey()), e.getValue(), data);
             if (TRACE) {
                 System.out.format("test: character: %s sum: %s\n", e.getKey(), sum);
             }
@@ -128,6 +125,14 @@ public class Perceptron {
             sum += input[i] * weights[i];
         }
         return sum;
+    }
+
+    private double[] flatMap(final double[][] data) {
+        final double[] result = new double[data.length * data[0].length];
+        for (int y = 0; y < data.length; y++) {
+            System.arraycopy(data[y], 0, result, data[0].length * y, data[0].length);
+        }
+        return result;
     }
 
     private static double[] createInitialWeights(final int size) {
