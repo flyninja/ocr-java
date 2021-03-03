@@ -29,7 +29,7 @@ public class LearnTool {
      * @param args program arguments:
      *             - 0: input root folder name (relative to current dir), sub folders are counted as characters-names
      *             - 1: output folder name (relative to current dir)
-     *             - 2: output files weights)
+     *             - 2: output file weights
      *             - 3: image width
      *             - 4: image height
      */
@@ -38,10 +38,7 @@ public class LearnTool {
             throw new IllegalArgumentException(String.format("five arguments are expected but have/has been received %s", Arrays.toString(args)));
         }
 
-        final Path input = Paths.get(args[0]);
-        if (!Files.exists(input) || !Files.isDirectory(input)) {
-            throw new IllegalArgumentException(String.format("%s should be directory", input));
-        }
+        final Path input = getInputFolder(args[0]);
         final Path output = Paths.get(args[1]);
         final String template = args[2];
         final int width = Integer.parseInt(args[3]);
@@ -64,32 +61,22 @@ public class LearnTool {
         System.out.println("Done.");
     }
 
-    private static void trainFolder(final Perceptron perceptron, final List<String> characters, final File folder) {
-        System.out.format("train folder: %s\n", folder.getName());
-        final String character = folder.getName();
-        Arrays.stream(Objects.requireNonNull(folder.listFiles()))
-                .filter(File::isFile)
-                .filter(f -> f.getName().endsWith("png"))
-                .forEach(file -> trainImage(perceptron, characters, file, character));
+    static Path getInputFolder(final String arg) {
+        final Path input = Paths.get(arg);
+        if (!Files.exists(input) || !Files.isDirectory(input)) {
+            throw new IllegalArgumentException(String.format("%s should be directory", input));
+        }
+        return input;
     }
 
-    private static void trainImage(final Perceptron perceptron, final List<String> characters, final File file, final String character) {
-        System.out.format("train image: character: %s file: %s\n", character, file.getName());
+    static double[] getData(final File file) {
         try {
             final BufferedImage img = CardsDetectorFactory.getImage(file);
             final int[] rgb = img.getRGB(0, 0, img.getWidth(), img.getHeight(), null, 0, img.getWidth());
-            final double[] bin = PerceptronFactory.rgb2bin(rgb, getBackground(rgb));
-            perceptron.trainTrue(character, bin);
-            characters.stream().filter(c -> !c.equals(character)).forEach(c -> perceptron.trainFalse(character, bin));
+            return PerceptronFactory.rgb2bin(rgb, getBackground(rgb));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private static void trainZero(final Perceptron perceptron, final String character) {
-        System.out.format("train zero: %s\n", character);
-        final double[] zero = new double[perceptron.getSize()];
-        perceptron.trainFalse(character, zero);
     }
 
     static int getBackground(final int[] rgb) {
@@ -98,6 +85,40 @@ public class LearnTool {
             counters.compute(j, (k, v) -> v == null ? 1 : v + 1);
         }
         return CARD_BACKGROUND_COLORS.stream().filter(counters::containsKey).max(Comparator.comparing(counters::get)).orElseThrow(IllegalStateException::new);
+    }
+
+    static void trainImage(final Perceptron perceptron, final File file, final String character) {
+        System.out.format("train image: character: %s file: %s\n", character, file.getName());
+        final double[] bin = getData(file);
+        perceptron.trainTrue(character, bin);
+    }
+
+    static void trainImageFalse(final Perceptron perceptron, final File file, final String character) {
+        System.out.format("train image false: character: %s file: %s\n", character, file.getName());
+        final double[] bin = getData(file);
+        perceptron.trainFalse(character, bin);
+    }
+
+    private static void trainFolder(final Perceptron perceptron, final List<String> characters, final File folder) {
+        System.out.format("train folder: %s\n", folder.getName());
+        final String character = folder.getName();
+        Arrays.stream(Objects.requireNonNull(folder.listFiles()))
+                .filter(File::isFile)
+                .filter(file -> file.getName().endsWith("png"))
+                .forEach(file -> {
+                    trainImage(perceptron, file, character);
+                    trainImagesFalse(perceptron, characters, file, character);
+                });
+    }
+
+    private static void trainImagesFalse(final Perceptron perceptron, final List<String> characters, final File file, final String character) {
+        characters.stream().filter(c -> !c.equals(character)).forEach(c -> trainImageFalse(perceptron, file, character));
+    }
+
+    private static void trainZero(final Perceptron perceptron, final String character) {
+        System.out.format("train zero: %s\n", character);
+        final double[] zero = new double[perceptron.getSize()];
+        perceptron.trainFalse(character, zero);
     }
 
 }

@@ -28,10 +28,7 @@ public class Perceptron {
         this.size = size;
         this.weights = new HashMap<>();
         this.bias = new HashMap<>();
-        characters.forEach(c -> {
-            weights.put(c, createInitialWeights(size));
-            bias.put(c, createInitialBias());
-        });
+        characters.forEach(this::addCharacter);
     }
 
     public Perceptron(final double threshold, final int size, final Map<String, double[]> weights, final Map<String, Double> bias) {
@@ -50,6 +47,11 @@ public class Perceptron {
         } else {
             this.bias = bias;
         }
+    }
+
+    public void addCharacter(final String character) {
+        weights.put(character, createInitialWeights(size));
+        bias.put(character, createInitialBias());
     }
 
     public Map<String, double[]> getWeights() {
@@ -85,7 +87,24 @@ public class Perceptron {
                 .stream()
                 .max(Map.Entry.comparingByValue())
                 .map(Map.Entry::getKey)
+                .map(Perceptron::decodeCharacterName)
                 .orElse(null);
+    }
+
+    public String getNextSimilarCharacterName(final String character) {
+        if (!weights.containsKey(character)) {
+            return character;
+        }
+        int idx = 0;
+        for (final String key : weights.keySet()) {
+            if (decodeCharacterName(key).equals(character)) {
+                final String[] arr = key.split("_");
+                if (arr.length > 1) {
+                    idx = Math.max(idx, Integer.parseInt(arr[1]));
+                }
+            }
+        }
+        return character + "_" + (idx + 1);
     }
 
     private void train(final String character, final double[] input, final Predicate<Double> testCorrect, final BiFunction<Double, Double, Double> recalculate) {
@@ -117,5 +136,9 @@ public class Perceptron {
 
     private static Double createInitialBias() {
         return (double) 0;
+    }
+
+    private static String decodeCharacterName(final String character) {
+        return character.split("_")[0];
     }
 }

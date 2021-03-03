@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static com.togacure.LearnTool.getBackground;
+import static com.togacure.LearnTool.getData;
 
 /**
  * @author Vitaly Alekseev
@@ -36,14 +37,8 @@ public class TestLearnStat {
                 .filter(File::isFile)
                 .filter(f -> f.getName().endsWith("png"))
                 .forEach(file -> {
-                    try {
-                        final BufferedImage img = CardsDetectorFactory.getImage(file);
-                        final int[] rgb = img.getRGB(0, 0, img.getWidth(), img.getHeight(), null, 0, img.getWidth());
-                        final String detected = perceptron.test(PerceptronFactory.rgb2bin(rgb, getBackground(rgb)));
-                        counts.compute(detected, (k, v) -> v == null ? 1 : v + 1);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+                    final String detected = perceptron.test(getData(file));
+                    counts.compute(detected, (k, v) -> v == null ? 1 : v + 1);
                 });
 
         System.out.format("Done. Statistic '%s'\n", counts);
