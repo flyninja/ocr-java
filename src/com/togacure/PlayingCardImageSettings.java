@@ -18,13 +18,13 @@ public class PlayingCardImageSettings {
 
     public static final double PREDICTION_BACKGROUND_BLOCK_PERCENTAGE = 70;
 
-    public static final int SUITS_BLOCK_X_OFFSET = 3;
+    public static final int SUITS_BLOCK_X_OFFSET = 25;
 
-    public static final int SUITS_BLOCK_Y_OFFSET = 28;
+    public static final int SUITS_BLOCK_Y_OFFSET = 45;
 
-    public static final int SUITS_BLOCK_WIDTH = 27;
+    public static final int SUITS_BLOCK_WIDTH = 35;
 
-    public static final int SUITS_BLOCK_HEIGHT = 27;
+    public static final int SUITS_BLOCK_HEIGHT = 35;
 
     public static final int HANDS_BLOCK_X_OFFSET = 3;
 
@@ -34,9 +34,9 @@ public class PlayingCardImageSettings {
 
     public static final int HANDS_BLOCK_HEIGHT = 28;
 
-    public static final int SUITS_IMAGE_WIDTH = 20;
+    public static final int SUITS_IMAGE_WIDTH = 35;
 
-    public static final int SUITS_IMAGE_HEIGHT = 20;
+    public static final int SUITS_IMAGE_HEIGHT = 35;
 
     public static final int SUITS_BLOCK_VERTICAL_GAP = 4;
 
