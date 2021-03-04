@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static com.togacure.LearnTool.getBackground;
-import static com.togacure.LearnTool.getData;
 
 /**
  * @author Vitaly Alekseev
@@ -23,7 +22,9 @@ public class TestLearn {
 
         final Perceptron perceptron = PerceptronFactory.loadPerceptron(width * height, weights);
 
-        final String detected = perceptron.test(getData(Paths.get(args[0]).toFile()));
+        final int[] rgb = img.getRGB(0, 0, img.getWidth(), img.getHeight(), null, 0, img.getWidth());
+
+        final String detected = perceptron.test(PerceptronFactory.rgb2bin(rgb, getBackground(rgb)));
 
         System.out.format("Done. Detected '%s'\n", detected);
     }
