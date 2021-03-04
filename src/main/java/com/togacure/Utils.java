@@ -38,7 +38,7 @@ public final class Utils {
 
     static double[] getData(final BufferedImage img, final Block block, final int background) {
         final int[] rgb = img.getRGB(block.getX(), block.getY(), block.getWidth(), block.getHeight(), null, 0, block.getWidth());
-        return PerceptronFactory.rgb2bin(rgb, background);
+        return PerceptronFactory.rgb2bipolar(rgb, background);
     }
 
     static int getBackground(final int[] rgb) {

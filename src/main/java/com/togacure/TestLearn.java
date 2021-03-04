@@ -25,7 +25,7 @@ public class TestLearn {
 
         final int[] rgb = img.getRGB(0, 0, img.getWidth(), img.getHeight(), null, 0, img.getWidth());
 
-        final String detected = perceptron.test(PerceptronFactory.rgb2bin(rgb, getBackground(rgb)));
+        final String detected = perceptron.test(PerceptronFactory.rgb2bipolar(rgb, getBackground(rgb)));
 
         System.out.format("Done. Detected '%s'\n", detected);
     }

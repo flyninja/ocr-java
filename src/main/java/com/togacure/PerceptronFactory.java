@@ -48,10 +48,10 @@ public class PerceptronFactory {
         return new Perceptron(DEFAULT_PERCEPTRON_THRESHOLD, size, load(weights), null);
     }
 
-    public static double[] rgb2bin(final int[] rgb, final int background) {
+    public static double[] rgb2bipolar(final int[] rgb, final int background) {
         final double[] result = new double[rgb.length];
         for (int i = 0; i < rgb.length; i++) {
-            result[i] = rgb[i] == background ? 0 : 1;
+            result[i] = rgb[i] == background ? -1 : 1;
         }
         return result;
     }
