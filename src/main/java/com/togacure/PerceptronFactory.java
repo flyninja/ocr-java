@@ -1,6 +1,7 @@
 package com.togacure;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.Files;
@@ -22,8 +23,14 @@ public class PerceptronFactory {
     }
 
     public static <T> T load(final Path path) throws IOException {
-        try (final ObjectInputStream is = new ObjectInputStream(Files.newInputStream(path))) {
-            return (T) is.readObject();
+        try (final InputStream is = Files.newInputStream(path)) {
+            return load(is);
+        }
+    }
+
+    public static <T> T load(final InputStream is) throws IOException {
+        try {
+            return (T) new ObjectInputStream(is).readObject();
         } catch (ClassNotFoundException e) {
             throw new IOException(e);
         }
@@ -34,6 +41,10 @@ public class PerceptronFactory {
     }
 
     public static Perceptron loadPerceptron(final int size, final Path weights) throws IOException {
+        return new Perceptron(DEFAULT_PERCEPTRON_THRESHOLD, size, load(weights), null);
+    }
+
+    public static Perceptron loadPerceptron(final int size, final InputStream weights) throws IOException {
         return new Perceptron(DEFAULT_PERCEPTRON_THRESHOLD, size, load(weights), null);
     }
 

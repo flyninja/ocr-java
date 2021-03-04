@@ -10,6 +10,9 @@ import java.util.Set;
  */
 public class PlayingCardImageSettings {
 
+    public static final String SUITS_WEIGHTS_RESOURCE = "suits.weights";
+    public static final String HANDS_WEIGHTS_RESOURCE = "hands.weights";
+
     public static boolean TRACE = false;
 
     public static final int PREDICTION_BLOCK_WIDTH = 20;

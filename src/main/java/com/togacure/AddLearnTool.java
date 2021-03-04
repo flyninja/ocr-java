@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.togacure.LearnTool.getData;
-import static com.togacure.LearnTool.getInputFolder;
-import static com.togacure.LearnTool.trainImage;
-import static com.togacure.LearnTool.trainImageFalse;
+import static com.togacure.Utils.getData;
+import static com.togacure.Utils.getInputFolder;
+import static com.togacure.Utils.trainImage;
+import static com.togacure.Utils.trainImageFalse;
 
 /**
  * @author Vitaly Alekseev

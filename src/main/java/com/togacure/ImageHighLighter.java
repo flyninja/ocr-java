@@ -22,7 +22,7 @@ public final class ImageHighLighter {
     public static void main(final String[] args) throws IOException {
         PlayingCardImageSettings.TRACE = true;
 
-        final BufferedImage img = CardsDetectorFactory.getImage("resources", "imgs", args[0]);
+        final BufferedImage img = CardsDetectorFactory.getImage("input", "imgs", args[0]);
 
         System.out.format("%s\n", img);
 

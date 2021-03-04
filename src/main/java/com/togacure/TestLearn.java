@@ -5,7 +5,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static com.togacure.LearnTool.getBackground;
+import static com.togacure.Utils.getBackground;
+
 
 /**
  * @author Vitaly Alekseev
