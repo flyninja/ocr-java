@@ -64,6 +64,7 @@ public class AddLearnTool {
                     .collect(Collectors.toList());
             if (!wrongDetected.isEmpty()) {
                 final String nextCharacter = perceptron.getNextSimilarCharacterName(character);
+                perceptron.addCharacter(nextCharacter);
                 wrongDetected.forEach(file -> trainImage(perceptron, file, nextCharacter));
                 System.out.format("nextCharacter: %s\n", nextCharacter);
             }
