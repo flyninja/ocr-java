@@ -66,9 +66,8 @@ public class Perceptron {
             return match;
         })).entrySet()
                 .stream()
-                .filter(e -> e.getValue() == 0)
+                .max(Map.Entry.comparingByValue())
                 .map(Map.Entry::getKey)
-                .findFirst()
                 .orElse(null);
     }
 
@@ -127,16 +126,18 @@ public class Perceptron {
     }
 
     private int match(final double[] first, final double[] second, final Comparator<Double> comparator) {
+        int count = 0;
         for (int i = 0; i < size; i++) {
             int c = comparator.compare(first[i], second[i]);
             if (c != 0) {
                 if (TRACE) {
                     System.out.format("match: first: %s second: %s index: %s\n", first[i], second[i], i);
                 }
-                return c;
+            } else {
+                count += 1;
             }
         }
-        return 0;
+        return count;
     }
 
     private static double[] createInitialWeights(final int size) {

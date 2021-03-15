@@ -30,6 +30,8 @@ public class TestLearnStat {
         final int width = Integer.parseInt(args[3]);
         final int height = Integer.parseInt(args[4]);
 
+        final String expected = args.length > 5 ? args[5] : null;
+
         final Perceptron perceptron = PerceptronFactory.loadPerceptron(width * height, weights, outputs);
 
         final Map<String, Integer> counts = new HashMap<>();
@@ -40,6 +42,9 @@ public class TestLearnStat {
                 .forEach(file -> {
                     final String detected = perceptron.test(getData(file));
                     counts.compute(detected, (k, v) -> v == null ? 1 : v + 1);
+                    if (expected != null && !expected.equals(detected)) {
+                        System.out.format("%s: expected: %s detected: %s\n", file.getName(), expected, detected);
+                    }
                 });
 
         System.out.format("Done. Statistic '%s'\n", counts);
