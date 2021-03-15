@@ -38,7 +38,7 @@ public final class Utils {
 
     static double[] getData(final BufferedImage img, final Block block, final int background) {
         final int[] rgb = img.getRGB(block.getX(), block.getY(), block.getWidth(), block.getHeight(), null, 0, block.getWidth());
-        return PerceptronFactory.rgb2bipolar(rgb, background);
+        return PerceptronFactory.rgb2bin(rgb, background);
     }
 
     static int getBackground(final int[] rgb) {
@@ -52,13 +52,7 @@ public final class Utils {
     static void trainImage(final Perceptron perceptron, final File file, final String character) {
         System.out.format("train image: character: %s file: %s\n", character, file.getName());
         final double[] bin = getData(file);
-        perceptron.trainTrue(character, bin);
-    }
-
-    static void trainImageFalse(final Perceptron perceptron, final File file, final String character) {
-        System.out.format("train image false: character: %s file: %s\n", character, file.getName());
-        final double[] bin = getData(file);
-        perceptron.trainFalse(character, bin);
+        perceptron.train(character, bin);
     }
 
     private Utils() {

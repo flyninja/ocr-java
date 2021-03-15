@@ -12,9 +12,11 @@ import java.util.stream.Collectors;
 
 import static com.togacure.PlayingCardImageSettings.HANDS_IMAGE_HEIGHT;
 import static com.togacure.PlayingCardImageSettings.HANDS_IMAGE_WIDTH;
+import static com.togacure.PlayingCardImageSettings.HANDS_OUTPUTS_RESOURCE;
 import static com.togacure.PlayingCardImageSettings.HANDS_WEIGHTS_RESOURCE;
 import static com.togacure.PlayingCardImageSettings.SUITS_IMAGE_HEIGHT;
 import static com.togacure.PlayingCardImageSettings.SUITS_IMAGE_WIDTH;
+import static com.togacure.PlayingCardImageSettings.SUITS_OUTPUTS_RESOURCE;
 import static com.togacure.PlayingCardImageSettings.SUITS_WEIGHTS_RESOURCE;
 import static com.togacure.Utils.getData;
 import static com.togacure.Utils.getInputFolder;
@@ -36,8 +38,12 @@ public class OCRPlayingCards {
         }
         final Path input = getInputFolder(args[0]);
 
-        final Perceptron suitsPerceptron = PerceptronFactory.loadPerceptron(SUITS_IMAGE_WIDTH * SUITS_IMAGE_HEIGHT, OCRPlayingCards.class.getClassLoader().getResourceAsStream(SUITS_WEIGHTS_RESOURCE));
-        final Perceptron handsPerceptron = PerceptronFactory.loadPerceptron(HANDS_IMAGE_WIDTH * HANDS_IMAGE_HEIGHT, OCRPlayingCards.class.getClassLoader().getResourceAsStream(HANDS_WEIGHTS_RESOURCE));
+        final Perceptron suitsPerceptron = PerceptronFactory.loadPerceptron(SUITS_IMAGE_WIDTH * SUITS_IMAGE_HEIGHT,
+                OCRPlayingCards.class.getClassLoader().getResourceAsStream(SUITS_WEIGHTS_RESOURCE),
+                OCRPlayingCards.class.getClassLoader().getResourceAsStream(SUITS_OUTPUTS_RESOURCE));
+        final Perceptron handsPerceptron = PerceptronFactory.loadPerceptron(HANDS_IMAGE_WIDTH * HANDS_IMAGE_HEIGHT,
+                OCRPlayingCards.class.getClassLoader().getResourceAsStream(HANDS_WEIGHTS_RESOURCE),
+                OCRPlayingCards.class.getClassLoader().getResourceAsStream(HANDS_OUTPUTS_RESOURCE));
 
         final long startTime = System.currentTimeMillis();
 

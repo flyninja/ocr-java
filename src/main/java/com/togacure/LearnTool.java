@@ -6,13 +6,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.togacure.Utils.getInputFolder;
 import static com.togacure.Utils.trainImage;
-import static com.togacure.Utils.trainImageFalse;
 
 /**
  * @author Vitaly Alekseev
@@ -27,12 +28,13 @@ public class LearnTool {
      * @param args program arguments:
      *             - 0: input root folder name (relative to current dir), sub folders are counted as characters-names
      *             - 1: output folder name (relative to current dir)
-     *             - 2: output file weights
+     *             - 2: output file name template
      *             - 3: image width
      *             - 4: image height
+     *             - 5: epoch count
      */
     public static void main(final String[] args) throws IOException {
-        if (args.length != 5) {
+        if (args.length != 6) {
             throw new IllegalArgumentException(String.format("five arguments are expected but have/has been received %s", Arrays.toString(args)));
         }
 
@@ -41,44 +43,48 @@ public class LearnTool {
         final String template = args[2];
         final int width = Integer.parseInt(args[3]);
         final int height = Integer.parseInt(args[4]);
+        final int epochCount = Integer.parseInt(args[5]);
 
         if (!Files.exists(output)) {
             Files.createDirectories(output);
         }
 
-        final List<String> characters = Arrays.stream(Objects.requireNonNull(input.toFile().listFiles())).filter(File::isDirectory).map(File::getName).collect(Collectors.toList());
+        final Map<String, double[]> outputs = Arrays.stream(Objects.requireNonNull(input.toFile().listFiles())).filter(File::isDirectory).collect(Collectors.toMap(folder -> folder.getName(),
+                folder -> Arrays.stream(Objects.requireNonNull(folder.listFiles()))
+                        .filter(File::isFile)
+                        .filter(file -> file.getName().endsWith("png"))
+                        .findFirst()
+                        .map(Utils::getData)
+                        .orElseThrow(IllegalStateException::new)));
 
-        final Perceptron perceptron = PerceptronFactory.createPerceptron(width * height, characters);
+        final Perceptron perceptron = PerceptronFactory.createPerceptron(width * height, outputs);
 
-        characters.forEach(c -> trainZero(perceptron, c));
-
-        Arrays.stream(Objects.requireNonNull(input.toFile().listFiles())).filter(File::isDirectory).forEach(folder -> trainFolder(perceptron, characters, folder));
+        Arrays.stream(Objects.requireNonNull(input.toFile().listFiles())).filter(File::isDirectory).forEach(folder -> trainFolder(perceptron, folder, epochCount));
 
         PerceptronFactory.store(output.resolve(template + ".weights"), perceptron.getWeights());
+        PerceptronFactory.store(output.resolve(template + ".outputs"), outputs);
 
         System.out.println("Done.");
     }
 
-    private static void trainFolder(final Perceptron perceptron, final List<String> characters, final File folder) {
+    private static void trainFolder(final Perceptron perceptron, final File folder, final int epochCount) {
         System.out.format("train folder: %s\n", folder.getName());
         final String character = folder.getName();
-        Arrays.stream(Objects.requireNonNull(folder.listFiles()))
+        final List<File> images = Arrays.stream(Objects.requireNonNull(folder.listFiles()))
                 .filter(File::isFile)
                 .filter(file -> file.getName().endsWith("png"))
-                .forEach(file -> {
-                    trainImage(perceptron, file, character);
-                    trainImagesFalse(perceptron, characters, file, character);
-                });
+                .collect(Collectors.toList());
+        for (int i = 0; i < epochCount; i++) {
+            Collections.shuffle(images);
+            trainFolder(perceptron, character, images);
+        }
     }
 
-    private static void trainImagesFalse(final Perceptron perceptron, final List<String> characters, final File file, final String character) {
-        characters.stream().filter(c -> !c.equals(character)).forEach(c -> trainImageFalse(perceptron, file, character));
-    }
-
-    private static void trainZero(final Perceptron perceptron, final String character) {
-        System.out.format("train zero: %s\n", character);
-        final double[] zero = new double[perceptron.getSize()];
-        perceptron.trainFalse(character, zero);
+    private static void trainFolder(final Perceptron perceptron, final String character, final List<File> folderFiles) {
+        folderFiles.stream()
+                .filter(File::isFile)
+                .filter(file -> file.getName().endsWith("png"))
+                .forEach(file -> trainImage(perceptron, file, character));
     }
 
 }

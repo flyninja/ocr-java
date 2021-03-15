@@ -6,9 +6,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
-
-import static com.togacure.PlayingCardImageSettings.DEFAULT_PERCEPTRON_THRESHOLD;
+import java.util.Map;
 
 /**
  * @author Vitaly Alekseev
@@ -36,22 +34,22 @@ public class PerceptronFactory {
         }
     }
 
-    public static Perceptron createPerceptron(final int size, final List<String> characters) {
-        return new Perceptron(DEFAULT_PERCEPTRON_THRESHOLD, size, characters);
+    public static Perceptron createPerceptron(final int size, final Map<String, double[]> outputs) {
+        return new Perceptron(size, outputs);
     }
 
-    public static Perceptron loadPerceptron(final int size, final Path weights) throws IOException {
-        return new Perceptron(DEFAULT_PERCEPTRON_THRESHOLD, size, load(weights), null);
+    public static Perceptron loadPerceptron(final int size, final Path weights, final Path outputs) throws IOException {
+        return new Perceptron(size, load(weights), load(outputs));
     }
 
-    public static Perceptron loadPerceptron(final int size, final InputStream weights) throws IOException {
-        return new Perceptron(DEFAULT_PERCEPTRON_THRESHOLD, size, load(weights), null);
+    public static Perceptron loadPerceptron(final int size, final InputStream weights, final InputStream outputs) throws IOException {
+        return new Perceptron(size, load(weights), load(outputs));
     }
 
-    public static double[] rgb2bipolar(final int[] rgb, final int background) {
+    public static double[] rgb2bin(final int[] rgb, final int background) {
         final double[] result = new double[rgb.length];
         for (int i = 0; i < rgb.length; i++) {
-            result[i] = rgb[i] == background ? -1 : 1;
+            result[i] = rgb[i] == background ? 1 : 0;
         }
         return result;
     }

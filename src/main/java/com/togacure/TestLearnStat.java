@@ -26,10 +26,11 @@ public class TestLearnStat {
             throw new IllegalArgumentException(String.format("%s should be directory", input));
         }
         final Path weights = Paths.get(args[1]);
-        final int width = Integer.parseInt(args[2]);
-        final int height = Integer.parseInt(args[3]);
+        final Path outputs = Paths.get(args[2]);
+        final int width = Integer.parseInt(args[3]);
+        final int height = Integer.parseInt(args[4]);
 
-        final Perceptron perceptron = PerceptronFactory.loadPerceptron(width * height, weights);
+        final Perceptron perceptron = PerceptronFactory.loadPerceptron(width * height, weights, outputs);
 
         final Map<String, Integer> counts = new HashMap<>();
 

@@ -11,7 +11,9 @@ import java.util.Set;
 public class PlayingCardImageSettings {
 
     public static final String SUITS_WEIGHTS_RESOURCE = "suits.weights";
+    public static final String SUITS_OUTPUTS_RESOURCE = "suits.outputs";
     public static final String HANDS_WEIGHTS_RESOURCE = "hands.weights";
+    public static final String HANDS_OUTPUTS_RESOURCE = "hands.outputs";
 
     public static boolean TRACE = false;
 
@@ -60,10 +62,9 @@ public class PlayingCardImageSettings {
         CARD_BACKGROUND_COLORS.add(new Color(0x78, 0x78, 0x78).getRGB());
     }
 
-    public static final double DEFAULT_PERCEPTRON_THRESHOLD = 0.0;
-
     public static final int DEFAULT_CARD_DETECTOR_IMAGE_PART = 2;
 
     public static final int DEFAULT_CARD_DETECTOR_IMAGE_MAX_HEIGHT = 100;
 
+    public static final double PERCEPTRON_OUTPUT_MATCH_THRESHOLD = 0.5d;
 }
